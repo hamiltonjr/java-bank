@@ -1,7 +1,11 @@
 package br.com.dio;
 
+import br.com.dio.exception.AccountNotFoundException;
+import br.com.dio.exception.NoFundsEnoughException;
 import br.com.dio.repository.AccountRepository;
 import br.com.dio.repository.InvestmentRepository;
+
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
@@ -54,14 +58,32 @@ public class Main {
         }
     }
 
-
+    // cria conta após entrada de pix e valor
     private static void criarConta() {
         System.out.println("1 === Criar uma conta ===");
 
+        System.out.print("Informe as chaves Pix separadas por ';': ");
+        var pix = Arrays.stream(scanner.next().split(";")).toList();
+
+        System.out.print("Informe o valor inicial do depósito: ");
+        var amount = scanner.nextLong();
+
+        var wallet = accountRepository.create(pix, amount);
+        System.out.printf("Conta criada: %s%n", wallet);
     }
 
+    // cria investimento após entrada de taxa e valor inicial
     private static void criarInvestimento() {
         System.out.println(" 2 === Criar um investimento ===");
+
+        System.out.print("Informe a taxa de investimento: ");
+        var tax = scanner.nextInt();
+
+        System.out.print("Informe o valor inicial do depósito: ");
+        var initialFunds = scanner.nextLong();
+
+        var investment = investmentRepository.create(tax, initialFunds);
+        System.out.printf("Investimento criado: %s%n", investment);
     }
 
     private static void fazerInvestimento() {
@@ -70,14 +92,33 @@ public class Main {
 
     private static void depositarNaConta() {
         System.out.println(" 4 === Depositar na conta ===");
+        System.out.print("Informe a chave pix da conta para depósito: ");
+        var pix = scanner.next();
+        System.out.print("Informe o valor a ser depositado: ");
+        var amount = scanner.nextLong();
+        try {
+            accountRepository.deposit(pix, amount);
+        } catch (AccountNotFoundException | NoFundsEnoughException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private static void sacarDaConta() {
         System.out.println(" 5 === Sacar da comta ===");
+        System.out.print("Informe a chave pix da conta para saque: ");
+        var pix = scanner.next();
+        System.out.print("Informe o valor a ser sacado: ");
+        var amount = scanner.nextLong();
+        try {
+            accountRepository.withdraw(pix, amount);
+        } catch (AccountNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private static void transferenciaEntreContas() {
         System.out.println(" 6 === Transferência entre contas ===");
+        System.out.print("Informe a chave pix da conta para saque: ");
     }
 
     private static void investir() {
@@ -113,6 +154,7 @@ public class Main {
         System.out.println("13 === Histórico de conta ===");
     }
 
+    // agradecimento e saída
     private static void sair() {
         System.out.println("14 === Sair ===");
         System.out.println("Obrigado por utilizar nosso software!");
