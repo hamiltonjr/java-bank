@@ -15,14 +15,6 @@ public class InvestmentRepository {
     private final List<Investment> investments = new ArrayList<>();
     private final List<InvestmentWallet> wallets = new ArrayList<>();
 
-    public List<Investment> list() {
-        return this.investments;
-    }
-
-    public List<InvestmentWallet> listWallets() {
-        return this.wallets;
-    }
-
     public Investment create(final long tax, final long initialFunds) {
         this.nextId++;
         var investment = new Investment(nextId, tax, initialFunds);
@@ -34,10 +26,9 @@ public class InvestmentRepository {
         if (!wallets.isEmpty()) {
             var accountsInUse = wallets.stream().map(InvestmentWallet::getAccount).toList();
             if (accountsInUse.contains(account)) {
-                throw new AccountWithInvestmentException("A conta já possui investimento!");
+                throw new AccountWithInvestmentException("A conta'" + account + "'já possui um investimento");
             }
         }
-
         var investment = findById(id);
         checkFundsForTransaction(account, investment.initialFunds());
         var wallet = new InvestmentWallet(investment, account, investment.initialFunds());
@@ -56,7 +47,7 @@ public class InvestmentRepository {
         return investments.stream()
                 .filter(a -> a.id() == id)
                 .findFirst()
-                .orElseThrow(() -> new InvestmentNotFoundException("Investimento não encontrado!"));
+                .orElseThrow(() -> new InvestmentNotFoundException("O investimento '" + id + "' não foi encontrado"));
     }
 
     public void updateAmount() {
@@ -65,18 +56,26 @@ public class InvestmentRepository {
 
     public InvestmentWallet deposit(final String pix, final long funds) {
         var wallet = fimdWalletByAccountPix(pix);
-        wallet.addMoney(wallet.getAccount().reduceMoney(funds), "Investimento");
+        wallet.addMoney(wallet.getAccount().reduceMoney(funds), wallet.getService(), "Investimento");
         return wallet;
     }
 
     public InvestmentWallet withdraw(final String pix, final long funds) {
         var wallet = fimdWalletByAccountPix(pix);
         checkFundsForTransaction(wallet, funds);
-        wallet.getAccount().addMoney(wallet.reduceMoney(funds), "Saque de investimento");
+        wallet.getAccount().addMoney(wallet.reduceMoney(funds), wallet.getService(), "Saque de investimento");
         if (wallet.getFunds() == 0) {
             wallets.remove(wallet);
         }
         return wallet;
+    }
+
+    public List<Investment> list() {
+        return this.investments;
+    }
+
+    public List<InvestmentWallet> listWallets() {
+        return this.wallets;
     }
 
 }

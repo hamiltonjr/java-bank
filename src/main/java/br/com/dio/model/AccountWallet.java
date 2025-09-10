@@ -1,7 +1,6 @@
 package br.com.dio.model;
 
 import lombok.Getter;
-import lombok.ToString;
 import java.util.List;
 import static br.com.dio.model.BankService.ACCOUNT;
 
@@ -25,10 +24,10 @@ public class AccountWallet extends Wallet {
         this.money.addAll(money);
     }
 
+
     @Override
     public String toString() {
-        return "AccountWallet{" + "pix=" + pix + ", " +
-                "money=" + String.format("R$%1.2f", this.getFunds()/100.0) + '}';
+        return super.toString() + "AccountWallet{" + "pix=" + pix + '}';
     }
 
 }

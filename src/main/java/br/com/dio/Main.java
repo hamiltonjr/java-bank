@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
+
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
     private static final int EXIT_SUCCESS = 0;
@@ -194,8 +196,9 @@ public class Main {
         System.out.print("Informe a chave pix da conta para verificar extrato: ");
         var pix = scanner.next();
         AccountWallet wallet;
+
         try {
-            var sortedHistory = accountRepository.getHistory(pix);
+            var sortedHistory = accountRepository.
             sortedHistory.forEach((k, v) -> {
                 System.out.println(k.format(ISO_DATE_TIME));
                 System.out.println(v.getFirst().transactionID());

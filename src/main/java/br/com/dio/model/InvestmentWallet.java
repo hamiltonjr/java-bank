@@ -1,7 +1,7 @@
 package br.com.dio.model;
 
 import lombok.Getter;
-import lombok.ToString;
+
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -16,20 +16,20 @@ public class InvestmentWallet extends Wallet {
         super(INVESTMENT);
         this.investment = investment;
         this.account = account;
-        addMoney(account.reduceMoney(amount), "investment");
+        addMoney(account.reduceMoney(amount), getService(), "investment");
     }
 
     public void updateAmount(final long percent) {
         var amount = getFunds() * percent / 100;
-        var history = new MoneyAudit(UUID.randomUUID(), "rendimentos", OffsetDateTime.now());
+        var history = new MoneyAudit(UUID.randomUUID(), getService(), "rRndimentos", OffsetDateTime.now());
         var money = Stream.generate(() -> new Money(history)).limit(amount).toList();
         this.money.addAll(money);
     }
 
     @Override
     public String toString() {
-        return "InvestmentWalletWallet{" + "pix=" + this.getAccount().getPix() + ", " +
-                "money=" + String.format("R$%1.2f", this.getFunds()/100.0) + '}';
+        return super.toString() + "InvestmentWallet{" +
+                "investment=" + investment + ", account=" + account + '}';
     }
 
 
