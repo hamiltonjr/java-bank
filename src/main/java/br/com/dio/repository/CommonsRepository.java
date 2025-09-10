@@ -1,6 +1,7 @@
 package br.com.dio.repository;
 
 import br.com.dio.exception.NoFundsEnoughException;
+import br.com.dio.model.AccountWallet;
 import br.com.dio.model.Money;
 import br.com.dio.model.MoneyAudit;
 import br.com.dio.model.Wallet;
@@ -10,8 +11,9 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
+import static lombok.AccessLevel.PRIVATE;
 
-@NoArgsConstructor(access=AccessLevel.PRIVATE)
+@NoArgsConstructor(access=PRIVATE)
 public class CommonsRepository {
     public static void checkFundsForTransaction(final Wallet source, final long amount) {
         if (source.getFunds() < amount) {
