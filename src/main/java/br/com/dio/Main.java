@@ -6,24 +6,39 @@ import br.com.dio.model.AccountWallet;
 import br.com.dio.model.Money;
 import br.com.dio.repository.AccountRepository;
 import br.com.dio.repository.InvestmentRepository;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Scanner;
-import java.util.stream.Collectors;
-
 import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 
+/**
+ * Classe principal do DIO Bank.
+ * Permite interações com contas, investimentos e operações financeiras via console.
+ */
 public class Main {
+
+    /** Scanner para entrada de dados pelo console */
     private static final Scanner scanner = new Scanner(System.in);
+
+    /** Código de saída do sistema */
     private static final int EXIT_SUCCESS = 0;
+
+    /** Repositório de contas */
     private static final AccountRepository accountRepository = new AccountRepository();
+
+    /** Repositório de investimentos */
     private static final InvestmentRepository investmentRepository = new InvestmentRepository();
 
+    /**
+     * Método principal que inicializa o sistema bancário e exibe o menu.
+     *
+     * @param args Argumentos de linha de comando
+     */
     public static void main(String[] args) {
         int option;
 
         System.out.println("Olá... seja bem-vindo ao DIO Bank!");
         while (true) {
+            // Exibe menu de opções
             System.out.print(
                     " 1. Criar uma conta\n" +
                     " 2. Criar um investimento\n" +
@@ -64,7 +79,10 @@ public class Main {
         }
     }
 
-    // cria conta após entrada de pix e valor
+    /**
+     * Cria uma conta bancária.
+     * Solicita as chaves Pix e o valor inicial do depósito.
+     */
     private static void criarConta() {
         System.out.println("1 === Criar uma conta ===");
         System.out.print("Informe as chaves Pix (separadas por ';'): ");
@@ -74,7 +92,10 @@ public class Main {
         System.out.println("Conta criada: " + accountRepository.create(pix, amount));
     }
 
-    // cria investimento após entrada de taxa e valor inicial
+    /**
+     * Cria um investimento.
+     * Solicita a taxa de rendimento e o valor inicial do investimento.
+     */
     private static void criarInvestimento() {
         System.out.println(" 2 === Criar um investimento ===");
         System.out.print("Informe a taxa de investimento: ");
@@ -84,7 +105,9 @@ public class Main {
         System.out.println("Investimento criado: " + investmentRepository.create(tax, initialFunds));
     }
 
-    // cria investimento dasos conta e ID
+    /**
+     * Inicializa um investimento a partir de uma conta e ID de investimento.
+     */
     private static void fazerInvestimento() {
         System.out.println("3 === Fazer um investimento conta ===");
         System.out.print("Informe a chave pix da conta: ");
@@ -99,7 +122,9 @@ public class Main {
         );
     }
 
-    // depositar valor em uma conta
+    /**
+     * Realiza depósito em uma conta.
+     */
     private static void depositarNaConta() {
         System.out.println(" 4 === Depositar na conta ===");
         System.out.print("Informe a chave pix da conta para depósito: ");
@@ -113,7 +138,9 @@ public class Main {
         }
     }
 
-    // sacar valor de uma conta
+    /**
+     * Realiza saque em uma conta.
+     */
     private static void sacarDaConta() {
         System.out.println(" 5 === Sacar da comta ===");
         System.out.print("Informe a chave pix da conta para saque: ");
@@ -127,7 +154,9 @@ public class Main {
         }
     }
 
-    // transferir valores entre contas
+    /**
+     * Realiza transferência entre contas.
+     */
     private static void transferirEntreContas() {
         System.out.println(" 6 === Transferência entre contas ===");
         System.out.print("Informe a chave pix da conta de origem: ");
@@ -143,7 +172,9 @@ public class Main {
         }
     }
 
-    // investir valores em conta
+    /**
+     * Deposita valores em investimento de uma conta.
+     */
     private static void investir() {
         System.out.println(" 7 === Investir ===");
         System.out.print("Informe a chave pix da conta para investimento: ");
@@ -157,7 +188,9 @@ public class Main {
         }
     }
 
-    // sacar valores investidos em uma conta
+    /**
+     * Realiza saque de investimento.
+     */
     private static void sacarInvestimento() {
         System.out.println(" 8 === Sacar investimento ===");
         System.out.print("Informe a chave pix da conta para resgate de investimento: ");
@@ -171,32 +204,42 @@ public class Main {
         }
     }
 
-    // listar contas do banco
+    /**
+     * Lista todas as contas do banco.
+     */
     private static void listarContas() {
         System.out.println("9 === Listar contas ===");
         accountRepository.list().forEach(System.out::println);
     }
 
-    // listar investimentos de uma conta
+    /**
+     * Lista todos os investimentos cadastrados.
+     */
     private static void listarInvestimentos() {
         System.out.println("10 === Listar investimentos ===");
         investmentRepository.list().forEach(System.out::println);
     }
 
-    // listar carteiras de investimento
+    /**
+     * Lista todas as carteiras de investimento.
+     */
     private static void listarCarteirasDeInvestimentos() {
         System.out.println("11 === Listar carteiras de investimento ===");
         investmentRepository.listWallets().forEach(System.out::println);
     }
 
-    // atualização (não-automática) do invesatimento
+    /**
+     * Atualiza os investimentos (rendimento não automático).
+     */
     private static void atualizarInvestimentos() {
         System.out.println("12 === Atualizar investimentos ===");
         investmentRepository.updateAmount();
         System.out.println("Investimentos reajustados!");
     }
 
-    // extrato
+    /**
+     * Exibe o histórico financeiro de uma conta.
+     */
     private static void historicoDeConta() {
         System.out.print("Informe a chave pix da conta para verificar extrato:");
         var pix = scanner.next();
@@ -216,11 +259,15 @@ public class Main {
         }
     }
 
-    // agradecimento e saída
+    /**
+     * Sai do sistema exibindo mensagem de agradecimento.
+     */
     private static void sair() {
         System.out.println("14 === Sair ===");
         System.out.println("Obrigado por utilizar nosso software!");
         System.exit(EXIT_SUCCESS);
     }
 }
+
+## Estrutura do Projeto
 
