@@ -20,4 +20,9 @@ public class Money {
         this.history.add(history);
     }
 
+    // método estático para formatação dos valores armazenados em centavos
+    public static String formatMoney(long amount) {
+        return String.format("R$%d,%02d", (amount / 100), (amount % 100));
+    }
+
 }

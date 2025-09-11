@@ -3,6 +3,7 @@ package br.com.dio;
 import br.com.dio.exception.AccountNotFoundException;
 import br.com.dio.exception.NoFundsEnoughException;
 import br.com.dio.model.AccountWallet;
+import br.com.dio.model.Money;
 import br.com.dio.repository.AccountRepository;
 import br.com.dio.repository.InvestmentRepository;
 import java.time.temporal.ChronoUnit;
@@ -23,23 +24,24 @@ public class Main {
 
         System.out.println("Olá... seja bem-vindo ao DIO Bank!");
         while (true) {
-            System.out.printf("%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s",
-                    " 1. Criar uma conta",
-                    " 2. Criar um investimento",
-                    " 3. Fazer um investimento",
-                    " 4. Depositar na conta",
-                    " 5. Sacar da comta",
-                    " 6. Transferência entre contas",
-                    " 7. Investir",
-                    " 8. Sacar investimento",
-                    " 9. Listar contas",
-                    "10. Listar investimentos",
-                    "11. Listar carteiras de investimento",
-                    "12. Atualizar investimentos",
-                    "13. Histórico de conta",
-                    "14. Sair",
+            System.out.print(
+                    " 1. Criar uma conta\n" +
+                    " 2. Criar um investimento\n" +
+                    " 3. Fazer um investimento\n" +
+                    " 4. Depositar na conta\n" +
+                    " 5. Sacar da comta\n" +
+                    " 6. Transferência entre contas\n" +
+                    " 7. Investir\n" +
+                    " 8. Sacar investimento\n" +
+                    " 9. Listar contas\n" +
+                    "10. Listar investimentos\n" +
+                    "11. Listar carteiras de investimento\n" +
+                    "12. Atualizar investimentos\n" +
+                    "13. Histórico de conta\n" +
+                    "14. Sair\n" +
                     "Selecione a operação desejada: "
             );
+
             option = scanner.nextInt();
 
             switch (option) {
@@ -89,8 +91,12 @@ public class Main {
         var pix = scanner.next();
         System.out.print("Informe o ID do investimento:");
         var investmentID = scanner.nextInt();
-        var wallet = investmentRepository.initInvestment(accountRepository.findByPix(pix), investmentID);
-        System.out.println("Conta de investimento criada: " + wallet);
+        System.out.println("Conta de investimento criada: " +
+                investmentRepository.initInvestment(
+                        accountRepository.findByPix(pix),
+                        investmentID
+                )
+        );
     }
 
     // depositar valor em uma conta
@@ -192,21 +198,21 @@ public class Main {
 
     // extrato
     private static void historicoDeConta() {
-        System.out.println("13 === Histórico de conta ===");
-        System.out.print("Informe a chave pix da conta para verificar extrato: ");
+        System.out.print("Informe a chave pix da conta para verificar extrato:");
         var pix = scanner.next();
         AccountWallet wallet;
-
+        System.out.println("-----------------------------------------------");
         try {
-            var sortedHistory = accountRepository.
+            var sortedHistory = accountRepository.getHistory(pix);
             sortedHistory.forEach((k, v) -> {
                 System.out.println(k.format(ISO_DATE_TIME));
-                System.out.println(v.getFirst().transactionID());
+                System.out.println(v.getFirst().transactionId());
                 System.out.println(v.getFirst().description());
-                System.out.println("R$" + (v.size()/100) + (v.size()%100));
+                System.out.println(Money.formatMoney(v.size()));
+                System.out.println("-----------------------------------------------");
             });
-        } catch (AccountNotFoundException e) {
-            System.out.println(e.getMessage());
+        } catch (AccountNotFoundException ex){
+            System.out.println(ex.getMessage());
         }
     }
 

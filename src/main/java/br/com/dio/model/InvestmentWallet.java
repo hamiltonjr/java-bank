@@ -32,5 +32,4 @@ public class InvestmentWallet extends Wallet {
                 "investment=" + investment + ", account=" + account + '}';
     }
 
-
 }
